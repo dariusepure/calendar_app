@@ -1,7 +1,6 @@
 import tkinter as tk
 from styles import COLORS, BUTTON_COLORS, BUTTON_FONT
 from event_manager import show_all_events_window
-from styles import toggle_theme, get_current_theme
 
 
 class BlueButton(tk.Canvas):
@@ -38,37 +37,16 @@ def create_sidebar(parent, show_frame, *_):
 
     # Title
     tk.Label(sidebar, text="CalendarApp", bg=COLORS['sidebar'],
-             fg="white", font=("Segoe UI", 14, "bold")).pack(pady=(20, 10))
-
-    # Theme toggle button
-    def update_theme_button():
-        current = get_current_theme()
-        theme_btn.config(text=f"🌓 {'Dark' if current == 'light' else 'Light'} Theme")
-
-    def theme_toggle():
-        toggle_theme()
-        update_theme_button()
-        # Update parent background
-        parent.config(bg=COLORS['sidebar'])
-        # Refresh all buttons (would need more complex update for full theme change)
-
-    theme_btn = tk.Button(sidebar, text="🌓 Dark Theme", command=theme_toggle,
-                          bg=COLORS['primary'], fg="white",
-                          font=("Segoe UI", 10, "bold"),
-                          bd=0, padx=10, pady=5,
-                          cursor="hand2",
-                          activebackground=COLORS['button_hover'])
-    theme_btn.pack(pady=(0, 15))
-    update_theme_button()
+             fg="white", font=("Segoe UI", 14, "bold")).pack(pady=(20, 15))
 
     # Navigation buttons
     tools = [
-        ("📅 Calendar", "main"),
-        ("📝 All Events", "events"),
-        ("📆 Weekday", "weekday"),
-        ("➕ Add Days", "add"),
-        ("➖ Subtract Days", "subtract"),
-        ("📊 Duration", "count"),
+        ("Calendar", "main"),
+        ("All Events", "events"),
+        ("Weekday", "weekday"),
+        ("Add Days", "add"),
+        ("Subtract Days", "subtract"),
+        ("Duration", "count"),
     ]
 
     for text, frame in tools:
@@ -87,7 +65,7 @@ def create_sidebar(parent, show_frame, *_):
             ).pack(pady=5)
 
     # Exit button
-    tk.Button(sidebar, text="🚪 Exit", command=parent.winfo_toplevel().quit,
+    tk.Button(sidebar, text="Exit", command=parent.winfo_toplevel().quit,
               bg=COLORS['primary'], fg="white", font=("Segoe UI", 10, "bold"),
               height=2, bd=0, activebackground=COLORS['button_hover'],
               cursor="hand2").pack(side="bottom", fill="x", pady=20, padx=15)

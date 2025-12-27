@@ -346,7 +346,7 @@ def show_all_events_window():
 
     # Check if window already exists
     for win in tk._default_root.winfo_children():
-        if isinstance(win, tk.Toplevel) and win.title() == "📋 All Events":
+        if isinstance(win, tk.Toplevel) and win.title() == "All Events":
             try:
                 win.lift()
                 win.focus_force()
@@ -355,7 +355,7 @@ def show_all_events_window():
                 pass
 
     win = tk.Toplevel()
-    win.title("📋 All Events")
+    win.title("All Events")
     win.geometry("700x500")
     win.configure(bg=COLORS['background'])
 
@@ -372,7 +372,7 @@ def show_all_events_window():
     main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
     # Title
-    tk.Label(main_frame, text="📋 All Events",
+    tk.Label(main_frame, text="All Events",
              font=("Segoe UI", 18, "bold"), bg=COLORS['background'],
              fg=COLORS['primary']).pack(pady=(0, 15))
 

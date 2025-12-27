@@ -3,7 +3,7 @@ from datetime import datetime
 from tkinter import ttk
 from calendar_view import show_calendar, prev_month, next_month, prev_year, next_year
 from ui_components import create_sidebar
-from styles import COLORS, toggle_theme, get_current_theme
+from styles import COLORS
 from calculators import (
     weekday_function, add_days_function, subtract_days_function,
     duration_function
@@ -214,7 +214,7 @@ def main():
         main_card = create_card(content_frame, bg=COLORS['light_gray'])
         main_card.pack(fill="both", expand=True, padx=4, pady=4)
 
-        tk.Label(main_card, text="📆 Weekday Calculator",
+        tk.Label(main_card, text="Weekday Calculator",
                  font=("Segoe UI", 16, "bold"), bg=COLORS['light_gray'],
                  fg=COLORS['text_dark']).pack(pady=(12, 12))
 
@@ -266,7 +266,7 @@ def main():
         main_card = create_card(content_frame, bg=COLORS['light_gray'])
         main_card.pack(fill="both", expand=True, padx=4, pady=4)
 
-        tk.Label(main_card, text="➕ Add Days Calculator",
+        tk.Label(main_card, text="Add Days Calculator",
                  font=("Segoe UI", 16, "bold"), bg=COLORS['light_gray'],
                  fg=COLORS['text_dark']).pack(pady=(12, 12))
 
@@ -330,7 +330,7 @@ def main():
         main_card = create_card(content_frame, bg=COLORS['light_gray'])
         main_card.pack(fill="both", expand=True, padx=4, pady=4)
 
-        tk.Label(main_card, text="➖ Subtract Days Calculator",
+        tk.Label(main_card, text="Subtract Days Calculator",
                  font=("Segoe UI", 16, "bold"), bg=COLORS['light_gray'],
                  fg=COLORS['text_dark']).pack(pady=(12, 12))
 
@@ -394,7 +394,7 @@ def main():
         main_card = create_card(content_frame, bg=COLORS['light_gray'])
         main_card.pack(fill="both", expand=True, padx=4, pady=4)
 
-        tk.Label(main_card, text="📊 Duration Calculator",
+        tk.Label(main_card, text="Duration Calculator",
                  font=("Segoe UI", 16, "bold"), bg=COLORS['light_gray'],
                  fg=COLORS['text_dark']).pack(pady=(12, 12))
 
@@ -508,19 +508,5 @@ def main():
 
     # Bind Escape to quit
     root.bind("<Escape>", lambda e: root.quit())
-
-    # Bind Ctrl+T to toggle theme
-    def toggle_theme_shortcut(event):
-        toggle_theme()
-        # Refresh current view
-        if 'main' in widgets:
-            show_frame('main')
-        else:
-            # Update all colors dynamically
-            for widget in root.winfo_children():
-                widget.config(bg=COLORS['background'])
-
-    root.bind("<Control-t>", toggle_theme_shortcut)
-    root.bind("<Control-T>", toggle_theme_shortcut)
 
     root.mainloop()

@@ -35,7 +35,13 @@ def get_valid_date(day_spin, month_spin, year_spin):
 
 
 def get_week_of_year(date):
+    """Return ISO week number (1-53)"""
     return date.isocalendar()[1]
+
+
+def get_iso_year(date):
+    """Return ISO year (might differ from calendar year for week 1)"""
+    return date.isocalendar()[0]
 
 
 # Duration calculation
@@ -95,8 +101,10 @@ def weekday_function(frame_name, day_spin, month_spin, year_spin, result_label):
         d, corrected_day = get_valid_date(day_spin[frame_name], month_spin[frame_name], year_spin[frame_name])
         wd = d.strftime('%A')
         week_number = get_week_of_year(d)
+        iso_year = get_iso_year(d)  # Anul corect pentru săptămână
+
         result_label.config(
-            text=f"{d.strftime('%B %d, %Y')} is a {wd}\nWeek {week_number} of {d.year}",
+            text=f"{d.strftime('%B %d, %Y')} is a {wd}\nWeek {week_number} of {iso_year}",
             foreground="#27ae60"
         )
     except Exception as e:
@@ -114,8 +122,10 @@ def add_days_function(frame_name, day_spin, month_spin, year_spin, days_entry, r
             raise ValueError("Days to add must be positive")
         new_date = d + timedelta(days=add)
         week_number = get_week_of_year(new_date)
+        iso_year = get_iso_year(new_date)  # Anul corect pentru săptămână
+
         result_label.config(
-            text=f"New date: {new_date.strftime('%A, %B %d, %Y')}\nWeek {week_number} of {new_date.year}\n({add} days added)",
+            text=f"New date: {new_date.strftime('%A, %B %d, %Y')}\nWeek {week_number} of {iso_year}\n({add} days added)",
             foreground="#27ae60"
         )
     except ValueError as e:
@@ -135,8 +145,10 @@ def subtract_days_function(frame_name, day_spin, month_spin, year_spin, days_ent
             raise ValueError("Days to subtract must be positive")
         new_date = d - timedelta(days=sub)
         week_number = get_week_of_year(new_date)
+        iso_year = get_iso_year(new_date)  # Anul corect pentru săptămână
+
         result_label.config(
-            text=f"New date: {new_date.strftime('%A, %B %d, %Y')}\nWeek {week_number} of {new_date.year}\n({sub} days subtracted)",
+            text=f"New date: {new_date.strftime('%A, %B %d, %Y')}\nWeek {week_number} of {iso_year}\n({sub} days subtracted)",
             foreground="#27ae60"
         )
     except ValueError as e:
@@ -153,10 +165,12 @@ def duration_function(frame_name, day_spin, month_spin, year_spin, day_spin2, mo
         duration = calculate_duration_details(d1, d2)
         week1 = get_week_of_year(d1)
         week2 = get_week_of_year(d2)
+        iso_year1 = get_iso_year(d1)  # Anul corect pentru prima săptămână
+        iso_year2 = get_iso_year(d2)  # Anul corect pentru a doua săptămână
 
         result_text = (
             f"Duration between {d1.strftime('%d/%m/%Y')} and {d2.strftime('%d/%m/%Y')}:\n\n"
-            f"Week {week1} of {d1.year} → Week {week2} of {d2.year}\n"
+            f"Week {week1} of {iso_year1} → Week {week2} of {iso_year2}\n"
             f"• {duration['total_days']} total days\n"
             f"• {duration['years']} years, {duration['months']} months, {duration['days']} days\n"
             f"• {duration['weeks']} weeks and {duration['remaining_days']} days\n"
@@ -181,10 +195,12 @@ def working_days_function(frame_name, day_spin, month_spin, year_spin, day_spin2
         duration = calculate_duration_details(d1, d2)
         week1 = get_week_of_year(d1)
         week2 = get_week_of_year(d2)
+        iso_year1 = get_iso_year(d1)  # Anul corect pentru prima săptămână
+        iso_year2 = get_iso_year(d2)  # Anul corect pentru a doua săptămână
 
         result_text = (
             f"Business Days Calculation:\n\n"
-            f"• Period: {d1.strftime('%d/%m/%Y')} (Week {week1}) to {d2.strftime('%d/%m/%Y')} (Week {week2})\n"
+            f"• Period: {d1.strftime('%d/%m/%Y')} (Week {week1} of {iso_year1}) to {d2.strftime('%d/%m/%Y')} (Week {week2} of {iso_year2})\n"
             f"• Total days: {duration['total_days'] + 1}\n"
             f"• Business days: {duration['weekdays']}\n"
             f"• Weekend days: {duration['weekends']}\n"
@@ -223,11 +239,13 @@ def week_calculator_function(frame_name, day_spin, month_spin, year_spin, weeks_
 
         original_week = get_week_of_year(d)
         new_week = get_week_of_year(new_date)
+        original_iso_year = get_iso_year(d)  # Anul corect pentru săptămâna originală
+        new_iso_year = get_iso_year(new_date)  # Anul corect pentru săptămâna nouă
 
         result_label.config(
             text=f"{operation}\n"
-                 f"Original date: {d.strftime('%B %d, %Y')} (Week {original_week})\n"
-                 f"New date: {new_date.strftime('%A, %B %d, %Y')} (Week {new_week})",
+                 f"Original date: {d.strftime('%B %d, %Y')} (Week {original_week} of {original_iso_year})\n"
+                 f"New date: {new_date.strftime('%A, %B %d, %Y')} (Week {new_week} of {new_iso_year})",
             foreground="#27ae60"
         )
     except ValueError as e:
@@ -240,13 +258,14 @@ def show_week_number_function(frame_name, day_spin, month_spin, year_spin, resul
     try:
         d, corrected_day = get_valid_date(day_spin[frame_name], month_spin[frame_name], year_spin[frame_name])
         week_number = get_week_of_year(d)
+        iso_year = get_iso_year(d)  # Anul corect pentru săptămână
         start_of_week = d - timedelta(days=d.weekday())
         end_of_week = start_of_week + timedelta(days=6)
 
         result_label.config(
             text=f"Week Information:\n\n"
                  f"• Date: {d.strftime('%A, %B %d, %Y')}\n"
-                 f"• Week {week_number} of {d.year}\n"
+                 f"• Week {week_number} of {iso_year}\n"
                  f"• Week period: {start_of_week.strftime('%B %d')} - {end_of_week.strftime('%B %d, %Y')}\n"
                  f"• Days in week {week_number}: 7",
             foreground="#27ae60"
