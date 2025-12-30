@@ -158,7 +158,7 @@ def show_event_dialog(date_str, date_obj):
             pass  # Window might be in weird state
 
     win = tk.Toplevel()
-    win.title(f"📅 Events for {date_obj.strftime('%A, %d %B %Y')}")
+    win.title(f"Events for {date_obj.strftime('%A, %d %B %Y')}")
     win.geometry("400x450")
     win.configure(bg=COLORS['background'])
 
@@ -385,7 +385,7 @@ def show_all_events_window():
     stats_frame = tk.Frame(main_frame, bg=COLORS['light_gray'], relief="solid", bd=1)
     stats_frame.pack(fill="x", pady=(0, 15))
 
-    tk.Label(stats_frame, text="📊 Statistics:",
+    tk.Label(stats_frame, text="Statistics:",
              font=("Segoe UI", 11, "bold"), bg=COLORS['light_gray']).pack(anchor="w", padx=10, pady=5)
 
     stats_text = tk.Frame(stats_frame, bg=COLORS['light_gray'])
@@ -474,7 +474,7 @@ def show_all_events_window():
         no_events_frame = tk.Frame(main_frame, bg=COLORS['card_bg'], relief="solid", bd=1)
         no_events_frame.pack(fill="both", expand=True, pady=(0, 15))
 
-        tk.Label(no_events_frame, text="📭 No events yet!",
+        tk.Label(no_events_frame, text="No events yet!",
                  font=("Segoe UI", 12, "italic"), bg=COLORS['card_bg'],
                  fg=COLORS['dark_gray']).pack(expand=True, pady=20)
 

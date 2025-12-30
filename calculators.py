@@ -125,7 +125,7 @@ def add_days_function(frame_name, day_spin, month_spin, year_spin, days_entry, r
         iso_year = get_iso_year(new_date)  # Anul corect pentru săptămână
 
         result_label.config(
-            text=f"New date: {new_date.strftime('%A, %B %d, %Y')}\nWeek {week_number} of {iso_year}\n({add} days added)",
+            text=f"{new_date.strftime('%A, %B %d, %Y')}\nWeek {week_number} of {iso_year}\n",
             foreground="#27ae60"
         )
     except ValueError as e:
@@ -148,7 +148,7 @@ def subtract_days_function(frame_name, day_spin, month_spin, year_spin, days_ent
         iso_year = get_iso_year(new_date)  # Anul corect pentru săptămână
 
         result_label.config(
-            text=f"New date: {new_date.strftime('%A, %B %d, %Y')}\nWeek {week_number} of {iso_year}\n({sub} days subtracted)",
+            text=f"{new_date.strftime('%A, %B %d, %Y')}\nWeek {week_number} of {iso_year}\n",
             foreground="#27ae60"
         )
     except ValueError as e:
@@ -170,12 +170,9 @@ def duration_function(frame_name, day_spin, month_spin, year_spin, day_spin2, mo
 
         result_text = (
             f"Duration between {d1.strftime('%d/%m/%Y')} and {d2.strftime('%d/%m/%Y')}:\n\n"
-            f"Week {week1} of {iso_year1} → Week {week2} of {iso_year2}\n"
-            f"• {duration['total_days']} total days\n"
+            f"• {duration['total_days']} days\n"
             f"• {duration['years']} years, {duration['months']} months, {duration['days']} days\n"
             f"• {duration['weeks']} weeks and {duration['remaining_days']} days\n"
-            f"• {duration['weekdays']} weekdays\n"
-            f"• {duration['weekends']} weekend days"
         )
 
         result_label.config(text=result_text, foreground="#27ae60")
