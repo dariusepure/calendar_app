@@ -70,25 +70,19 @@ def get_all_events():
     """Return all events sorted by date (newest first)"""
     events = load_events()
     all_events = []
-
-    # Parse dates once and cache
     date_cache = {}
-
     for date_str, event_list in events.items():
         if date_str not in date_cache:
             try:
                 date_cache[date_str] = datetime.strptime(date_str, "%Y-%m-%d")
             except ValueError:
-                continue  # Skip invalid dates
-
+                continue
         date_obj = date_cache[date_str]
-
         for event in event_list:
             try:
                 created_time = datetime.strptime(event['created_at'], "%Y-%m-%d %H:%M")
             except ValueError:
                 created_time = datetime.now()
-
             all_events.append({
                 'date': date_str,
                 'date_obj': date_obj,
@@ -96,7 +90,6 @@ def get_all_events():
                 'created': created_time.strftime("%Y-%m-%d %H:%M"),
                 'created_obj': created_time
             })
-
     all_events.sort(key=lambda x: (x['date_obj'], x['created_obj']), reverse=True)
     return all_events
 
@@ -109,10 +102,7 @@ def delete_event(date_str, event_index):
         return False
 
     if 0 <= event_index < len(events[date_str]):
-        # Remove the event
         deleted_event = events[date_str].pop(event_index)
-
-        # If no events left for this date, remove the date entirely
         if not events[date_str]:
             del events[date_str]
         else:
@@ -139,9 +129,6 @@ def cleanup_closed_windows():
         if date_str in open_event_windows:
             del open_event_windows[date_str]
 
-
-# ==================== EVENT DIALOG FOR SPECIFIC DATE ====================
-
 def show_event_dialog(date_str, date_obj):
     """Open window to add/view events for a specific date"""
     # Cleanup any closed windows first
@@ -155,23 +142,19 @@ def show_event_dialog(date_str, date_obj):
                 win.focus_force()
                 return
         except:
-            pass  # Window might be in weird state
+            pass
 
     win = tk.Toplevel()
     win.title(f"Events for {date_obj.strftime('%A, %d %B %Y')}")
     win.geometry("400x450")
     win.configure(bg=COLORS['background'])
-
-    # Center the window
     win.update_idletasks()
     width = win.winfo_width()
     height = win.winfo_height()
     x = (win.winfo_screenwidth() // 2) - (width // 2)
     y = (win.winfo_screenheight() // 2) - (height // 2)
     win.geometry(f'{width}x{height}+{x}+{y}')
-
     open_event_windows[date_str] = win
-
     def on_close():
         if date_str in open_event_windows:
             try:
@@ -179,54 +162,34 @@ def show_event_dialog(date_str, date_obj):
             except KeyError:
                 pass
         win.destroy()
-
     win.protocol("WM_DELETE_WINDOW", on_close)
-
-    # Main frame
     main_frame = tk.Frame(win, bg=COLORS['background'])
     main_frame.pack(fill="both", expand=True, padx=20, pady=20)
-
-    # Title
     tk.Label(main_frame, text=f"Events for {date_obj.strftime('%d %B %Y')}",
              font=("Segoe UI", 14, "bold"), bg=COLORS['background'],
              fg=COLORS['primary']).pack(pady=(0, 15))
-
-    # Frame for existing events
     events_frame = tk.Frame(main_frame, bg=COLORS['card_bg'], relief="solid", bd=1)
     events_frame.pack(fill="both", expand=True, pady=(0, 15))
-
     events_list = get_events_for_date(date_str)
-
     if events_list:
-        # Canvas with scrollbar for events
         canvas = tk.Canvas(events_frame, bg=COLORS['card_bg'], highlightthickness=0)
         scrollbar = ttk.Scrollbar(events_frame, orient="vertical", command=canvas.yview)
         scrollable_frame = tk.Frame(canvas, bg=COLORS['card_bg'])
-
         scrollable_frame.bind(
             "<Configure>",
             lambda e: canvas.configure(scrollregion=canvas.bbox("all"))
         )
-
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
-
         tk.Label(scrollable_frame, text="Existing Events:",
                  font=("Segoe UI", 10, "bold"), bg=COLORS['card_bg']).pack(anchor="w", padx=10, pady=5)
-
         for i, e in enumerate(events_list):
             event_frame = tk.Frame(scrollable_frame, bg=COLORS['card_bg'])
             event_frame.pack(fill="x", padx=10, pady=2)
-
-            # Blue bullet
             tk.Label(event_frame, text="•", fg=COLORS['primary'],
                      bg=COLORS['card_bg'], font=("Segoe UI", 12)).pack(side="left")
-
-            # Event text
             tk.Label(event_frame, text=f" {e['text']}",
                      bg=COLORS['card_bg'], font=("Segoe UI", 9), wraplength=250).pack(side="left", padx=5, fill="x", expand=True)
-
-            # Delete button
             del_btn = tk.Button(event_frame, text="✕",
                                 command=lambda d=date_str, idx=i: delete_and_refresh(d, idx),
                                 bg="#fee2e2", fg="#dc2626",
@@ -247,24 +210,16 @@ def show_event_dialog(date_str, date_obj):
         if delete_event(del_date_str, del_index):
             messagebox.showinfo("Success", "Event deleted!")
             on_close()
-            # Reopen window with updated list
             show_event_dialog(date_str, date_obj)
         else:
             messagebox.showerror("Error", "Failed to delete event!")
-
-    # Frame for adding new event
     add_frame = tk.Frame(main_frame, bg=COLORS['card_bg'], relief="solid", bd=1)
     add_frame.pack(fill="x", pady=(0, 15))
-
     tk.Label(add_frame, text="Add New Event:",
              font=("Segoe UI", 10, "bold"), bg=COLORS['card_bg']).pack(anchor="w", padx=10, pady=5)
-
-    # Entry for text
     entry = tk.Entry(add_frame, width=35, font=("Segoe UI", 10),
                      bg=COLORS['input_bg'], bd=1, relief="solid")
     entry.pack(pady=5, padx=10)
-
-    # Info message
     tk.Label(add_frame, text="Event will be saved for this date",
              font=("Segoe UI", 8, "italic"), bg=COLORS['card_bg'],
              fg=COLORS['dark_gray']).pack(pady=2)

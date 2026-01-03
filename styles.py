@@ -2,7 +2,6 @@ FONT = ("Segoe UI", 11)
 BUTTON_FONT = ("Segoe UI", 10, "bold")
 TITLE_FONT = ("Segoe UI", 18, "bold")
 
-# Theme fix (doar light theme)
 COLORS = {
     'background': "#f8fafc",
     'sidebar': "#1e3a8a",
