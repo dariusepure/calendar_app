@@ -7,9 +7,6 @@ from styles import COLORS
 EVENTS_FILE = "calendar_events.json"
 open_event_windows = {}
 
-
-# ==================== BASIC EVENT FUNCTIONS ====================
-
 def load_events():
     """Load all events from file"""
     if not os.path.exists(EVENTS_FILE):
@@ -47,7 +44,6 @@ def add_event(date_str, text):
 
     events = load_events()
 
-    # Get next available ID for this date
     existing_events = events.get(date_str, [])
     next_id = max([e['id'] for e in existing_events], default=0) + 1
 
@@ -106,7 +102,6 @@ def delete_event(date_str, event_index):
         if not events[date_str]:
             del events[date_str]
         else:
-            # Re-index IDs for remaining events (optional but good for consistency)
             for i, event in enumerate(events[date_str]):
                 event['id'] = i + 1
 
@@ -131,7 +126,6 @@ def cleanup_closed_windows():
 
 def show_event_dialog(date_str, date_obj):
     """Open window to add/view events for a specific date"""
-    # Cleanup any closed windows first
     cleanup_closed_windows()
 
     if date_str in open_event_windows:
@@ -235,20 +229,17 @@ def show_event_dialog(date_str, date_obj):
         if add_event(date_str, text):
             messagebox.showinfo("Success", "Event added successfully!")
             on_close()
-            # Reopen window with updated list
             show_event_dialog(date_str, date_obj)
         else:
             messagebox.showerror("Error", "Failed to add event!")
 
-    # Add button
-    add_btn = tk.Button(main_frame, text="➕ Add Event", command=add,
+    add_btn = tk.Button(main_frame, text="Add Event", command=add,
                         bg=COLORS['primary'], fg="white",
                         font=("Segoe UI", 10, "bold"),
                         bd=0, padx=20, pady=5,
                         cursor="hand2")
     add_btn.pack(pady=10)
 
-    # Close button
     close_btn = tk.Button(main_frame, text="Close", command=on_close,
                           bg=COLORS['light_gray'], fg=COLORS['text_dark'],
                           font=("Segoe UI", 9),
@@ -256,25 +247,17 @@ def show_event_dialog(date_str, date_obj):
                           cursor="hand2")
     close_btn.pack()
 
-    # Bind Enter key to add event
     entry.bind('<Return>', lambda e: add())
-
-    # Focus on entry
     entry.focus_set()
-
-
-# ==================== CALENDAR HANDLERS ====================
 
 def on_calendar_click(event, year, month, cal_table):
     """Handle click on a day in the calendar"""
-    # Identify the row and column clicked
     item = cal_table.identify_row(event.y)
     column = cal_table.identify_column(event.x)
 
     if not item or column == "#0":
         return
 
-    # Get value from that cell
     try:
         col_idx = int(column[1]) - 1
         values = cal_table.item(item, "values")
@@ -286,20 +269,14 @@ def on_calendar_click(event, year, month, cal_table):
         date_str = f"{year}-{month:02d}-{day:02d}"
         date_obj = datetime(year, month, day)
 
-        # Open event dialog
         show_event_dialog(date_str, date_obj)
     except (ValueError, IndexError):
-        pass  # Click was not on a valid day cell
-
-
-# ==================== ALL EVENTS WINDOW ====================
+        pass
 
 def show_all_events_window():
     """Open a window with all events"""
-    # Cleanup closed windows first
     cleanup_closed_windows()
 
-    # Check if window already exists
     for win in tk._default_root.winfo_children():
         if isinstance(win, tk.Toplevel) and win.title() == "All Events":
             try:
@@ -314,7 +291,6 @@ def show_all_events_window():
     win.geometry("700x500")
     win.configure(bg=COLORS['background'])
 
-    # Center the window
     win.update_idletasks()
     width = win.winfo_width()
     height = win.winfo_height()
@@ -322,16 +298,13 @@ def show_all_events_window():
     y = (win.winfo_screenheight() // 2) - (height // 2)
     win.geometry(f'{width}x{height}+{x}+{y}')
 
-    # Main frame
     main_frame = tk.Frame(win, bg=COLORS['background'])
     main_frame.pack(fill="both", expand=True, padx=20, pady=20)
 
-    # Title
     tk.Label(main_frame, text="All Events",
              font=("Segoe UI", 18, "bold"), bg=COLORS['background'],
              fg=COLORS['primary']).pack(pady=(0, 15))
 
-    # Statistics
     all_events = get_all_events()
     events_dict = load_events()
     total_events = sum(len(events) for events in events_dict.values())
@@ -352,11 +325,8 @@ def show_all_events_window():
              font=("Segoe UI", 10), bg=COLORS['light_gray'], fg=COLORS['text_dark']).pack(anchor="w")
 
     if total_events > 0:
-        # Frame for events list
         list_frame = tk.Frame(main_frame, bg=COLORS['card_bg'], relief="solid", bd=1)
         list_frame.pack(fill="both", expand=True, pady=(0, 15))
-
-        # Canvas with scrollbar
         canvas = tk.Canvas(list_frame, bg=COLORS['card_bg'], highlightthickness=0)
         scrollbar = ttk.Scrollbar(list_frame, orient="vertical", command=canvas.yview)
         scrollable_frame = tk.Frame(canvas, bg=COLORS['card_bg'])
@@ -369,7 +339,6 @@ def show_all_events_window():
         canvas.create_window((0, 0), window=scrollable_frame, anchor="nw")
         canvas.configure(yscrollcommand=scrollbar.set)
 
-        # Header
         header_frame = tk.Frame(scrollable_frame, bg=COLORS['header_bg'])
         header_frame.pack(fill="x", pady=(5, 2), padx=5)
 
@@ -383,29 +352,25 @@ def show_all_events_window():
                  font=("Segoe UI", 9, "bold"), bg=COLORS['header_bg'],
                  fg=COLORS['text_dark']).pack(side="left", padx=5)
 
-        # Separator
         tk.Frame(scrollable_frame, bg=COLORS['border'], height=1).pack(fill="x", pady=2)
 
-        # Events list
         for event in all_events:
             event_frame = tk.Frame(scrollable_frame, bg=COLORS['card_bg'])
             event_frame.pack(fill="x", pady=2, padx=5)
 
-            # Date (blue for events)
             date_label = tk.Label(event_frame,
                                   text=event['date_obj'].strftime("%d %b %Y"),
                                   font=("Segoe UI", 9), bg=COLORS['card_bg'],
                                   fg=COLORS['primary'], width=12)
             date_label.pack(side="left", padx=5)
 
-            # Event
             event_label = tk.Label(event_frame, text=event['text'],
                                    font=("Segoe UI", 9), bg=COLORS['card_bg'],
                                    fg=COLORS['text_dark'], width=45,
                                    wraplength=350, justify="left")
             event_label.pack(side="left", padx=5, fill="x", expand=True)
 
-            # Time added
+
             created_time = event['created_obj'] if 'created_obj' in event else datetime.now()
             time_label = tk.Label(event_frame,
                                   text=created_time.strftime("%H:%M"),
@@ -413,8 +378,7 @@ def show_all_events_window():
                                   fg=COLORS['dark_gray'], width=10)
             time_label.pack(side="left", padx=5)
 
-            # Delete button
-            del_btn = tk.Button(event_frame, text="🗑️",
+            del_btn = tk.Button(event_frame, text="Delete",
                                 command=lambda d=event['date'], txt=event['text']: delete_event_from_all(d, txt, win),
                                 bg="#fee2e2", fg="#dc2626",
                                 font=("Segoe UI", 8),
@@ -425,7 +389,6 @@ def show_all_events_window():
         canvas.pack(side="left", fill="both", expand=True, padx=5, pady=5)
         scrollbar.pack(side="right", fill="y")
     else:
-        # No events message
         no_events_frame = tk.Frame(main_frame, bg=COLORS['card_bg'], relief="solid", bd=1)
         no_events_frame.pack(fill="both", expand=True, pady=(0, 15))
 
@@ -441,11 +404,10 @@ def show_all_events_window():
         win.destroy()
         show_all_events_window()
 
-    # Button frame
     button_frame = tk.Frame(main_frame, bg=COLORS['background'])
     button_frame.pack(fill="x", pady=10)
 
-    refresh_btn = tk.Button(button_frame, text="🔄 Refresh", command=refresh_window,
+    refresh_btn = tk.Button(button_frame, text="Refresh", command=refresh_window,
                             bg=COLORS['button_hover'], fg="white",
                             font=("Segoe UI", 10),
                             bd=0, padx=15, pady=5,

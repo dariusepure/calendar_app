@@ -17,7 +17,6 @@ def get_valid_date(day_spin, month_spin, year_spin):
     m = get_int_from_spinbox(month_spin, datetime.now().month)
     d = get_int_from_spinbox(day_spin, datetime.now().day)
 
-    # Validate month range
     if m < 1 or m > 12:
         m = max(1, min(12, m))
 
