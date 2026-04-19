@@ -31,7 +31,7 @@ class BlueButton(tk.Canvas):
 def create_sidebar(parent, show_frame, *_):
     sidebar = tk.Frame(parent, width=180, bg=COLORS['sidebar'])
     sidebar.pack(fill="both", expand=True)
-    tk.Label(sidebar, text="CalendarApp", bg=COLORS['sidebar'],
+    tk.Label(sidebar, text="Calendar App", bg=COLORS['sidebar'],
              fg="white", font=("Segoe UI", 14, "bold")).pack(pady=(20, 15))
     tools = [
         ("Calendar", "main"),

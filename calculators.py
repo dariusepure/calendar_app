@@ -16,10 +16,8 @@ def get_valid_date(day_spin, month_spin, year_spin):
     y = get_int_from_spinbox(year_spin, datetime.now().year)
     m = get_int_from_spinbox(month_spin, datetime.now().month)
     d = get_int_from_spinbox(day_spin, datetime.now().day)
-
     if m < 1 or m > 12:
         m = max(1, min(12, m))
-
     try:
         last_day = calendar.monthrange(y, m)[1]
         if d > last_day:
@@ -31,14 +29,10 @@ def get_valid_date(day_spin, month_spin, year_spin):
         today = datetime.now()
         return today, today.day
 
-
 def get_week_of_year(date):
-    """Return ISO week number (1-53)"""
     return date.isocalendar()[1]
 
-
 def get_iso_year(date):
-    """Return ISO year (might differ from calendar year for week 1)"""
     return date.isocalendar()[0]
 
 def calculate_duration_details(d1, d2):
@@ -71,7 +65,6 @@ def calculate_duration_details(d1, d2):
         else:
             weekends += 1
         current += timedelta(days=1)
-
     return {
         'total_days': total_days,
         'years': years,
